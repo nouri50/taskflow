@@ -19,8 +19,8 @@ class Column
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $position = null;
+    #[ORM\Column]
+    private ?int $position = null;
 
     #[ORM\ManyToOne(inversedBy: 'columns')]
     private ?Board $board = null;
@@ -53,12 +53,12 @@ class Column
         return $this;
     }
 
-    public function getPosition(): ?string
+    public function getPosition(): ?int
     {
         return $this->position;
     }
 
-    public function setPosition(string $position): static
+    public function setPosition(int $position): static
     {
         $this->position = $position;
 
