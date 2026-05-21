@@ -1,0 +1,55 @@
+<div class="board-page">
+    <header class="header">
+        <div class="header-left">
+            <button class="btn-back" (click)="goBack()">← Retour</button>
+            <h1>{{ boardName }}</h1>
+        </div>
+    </header>
+
+    <div class="kanban" cdkDropListGroup>
+        <div class="column" *ngFor="let column of columns">
+            <div class="column-header">
+                <span class="column-title">{{ column.name }}</span>
+                <span class="column-count">{{ column.cards?.length || 0 }}</span>
+            </div>
+
+            <div class="cards-list" cdkDropList [id]="'col-' + column.id" [cdkDropListData]="column.cards || []"
+                [cdkDropListConnectedTo]="getColumnIds()" (cdkDropListDropped)="drop($event, column)">
+
+                <div class="card" *ngFor="let card of column.cards" cdkDrag (click)="openCard(card)">
+                    <div class="card-priority" [class]="'priority-' + card.priority"></div>
+                    <h4>{{ card.title }}</h4>
+                    <p *ngIf="card.description">{{ card.description }}</p>
+                    <div class="card-footer">
+                        <span class="due-date" *ngIf="card.dueDate">📅 {{ card.dueDate }}</span>
+                        <span class="assigned" *ngIf="card.assignedTo">
+                            {{ card.assignedTo.firstName[0] }}{{ card.assignedTo.lastName[0] }}
+                        </span>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="add-card">
+                <div *ngIf="showAddCard[column.id]" class="add-card-form">
+                    <input type="text" [(ngModel)]="newCardTitle[column.id]" placeholder="Titre de la carte"
+                        (keyup.enter)="addCard(column)" />
+                    <div class="form-actions">
+                        <button class="btn-add" (click)="addCard(column)">Ajouter</button>
+                        <button class="btn-cancel" (click)="showAddCard[column.id] = false">✕</button>
+                    </div>
+                </div>
+                <button class="btn-add-card" *ngIf="!showAddCard[column.id]" (click)="showAddCard[column.id] = true">
+                    + Ajouter une carte
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Card Modal -->
+<div class="modal-overlay" *ngIf="selectedCard" (click)="closeCard()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+        <app-card-modal [card]="selectedCard" (close)="closeCard()"></app-card-modal>
+    </div>
+</div>

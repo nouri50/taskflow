@@ -10,6 +10,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
+use App\Entity\Column;
 
 #[Route('/api/boards')]
 class BoardController extends AbstractController
@@ -48,7 +49,17 @@ class BoardController extends AbstractController
         $board->setCreatedAt(new \DateTimeImmutable());
         $board->setOwner($user);
 
-        // Ajouter le créateur comme membre owner
+        // Créer les 3 colonnes par défaut
+        $defaultColumns = ['À faire', 'En cours', 'Terminé'];
+        foreach ($defaultColumns as $index => $colName) {
+            $column = new Column();
+            $column->setName($colName);
+            $column->setPosition($index);
+            $column->setBoard($board);
+            $em->persist($column);
+        }
+
+        // Ajouter le créateur comme membre
         $member = new BoardMember();
         $member->setBoard($board);
         $member->setUser($user);
@@ -70,8 +81,6 @@ class BoardController extends AbstractController
     #[Route('/{id}', name: 'board_show', methods: ['GET'])]
     public function show(Board $board): JsonResponse
     {
-        $this->denyAccessUnlessGranted('view', $board);
-
         return $this->json([
             'id' => $board->getId(),
             'name' => $board->getName(),
@@ -79,7 +88,6 @@ class BoardController extends AbstractController
             'createdAt' => $board->getCreatedAt()?->format('Y-m-d H:i:s'),
         ]);
     }
-
     // PUT /api/boards/{id} — modifier un board
     #[Route('/{id}', name: 'board_update', methods: ['PUT'])]
     public function update(Board $board, Request $request, EntityManagerInterface $em): JsonResponse

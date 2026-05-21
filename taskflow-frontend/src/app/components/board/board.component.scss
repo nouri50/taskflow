@@ -1,0 +1,247 @@
+.board-page {
+    min-height: 100vh;
+    background: #f5f6fa;
+}
+
+.header {
+    background: #3949ab;
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+
+    .header-left {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+
+        h1 {
+            color: white;
+            font-size: 20px;
+            margin: 0;
+        }
+    }
+}
+
+.btn-back {
+    background: transparent;
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    padding: 8px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+
+    &:hover {
+        background: rgba(255, 255, 255, 0.1);
+    }
+}
+
+.kanban {
+    display: flex;
+    gap: 20px;
+    padding: 24px;
+    overflow-x: auto;
+    min-height: calc(100vh - 70px);
+}
+
+.column {
+    background: #ebecf0;
+    border-radius: 12px;
+    width: 300px;
+    min-width: 300px;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.column-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 4px 8px;
+
+    .column-title {
+        font-weight: 700;
+        font-size: 15px;
+    }
+
+    .column-count {
+        background: #ddd;
+        border-radius: 50%;
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        font-weight: 600;
+    }
+}
+
+.cards-list {
+    min-height: 60px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.card {
+    background: white;
+    border-radius: 8px;
+    padding: 12px;
+    cursor: grab;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
+    transition: box-shadow 0.2s;
+
+    &:hover {
+        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    .card-priority {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 4px;
+        height: 100%;
+
+        &.priority-high {
+            background: #e53935;
+        }
+
+        &.priority-medium {
+            background: #fb8c00;
+        }
+
+        &.priority-low {
+            background: #43a047;
+        }
+    }
+
+    h4 {
+        font-size: 14px;
+        font-weight: 600;
+        margin: 0 0 4px 8px;
+    }
+
+    p {
+        font-size: 12px;
+        color: #666;
+        margin: 0 0 0 8px;
+    }
+
+    .card-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 8px;
+        padding-left: 8px;
+
+        .due-date {
+            font-size: 11px;
+            color: #666;
+        }
+
+        .assigned {
+            background: #3949ab;
+            color: white;
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 600;
+        }
+    }
+}
+
+.cdk-drag-preview {
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+}
+
+.cdk-drag-placeholder {
+    opacity: 0.3;
+}
+
+.cdk-drag-animating {
+    transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.add-card-form {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    input {
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        font-size: 14px;
+
+        &:focus {
+            outline: none;
+            border-color: #3949ab;
+        }
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 8px;
+    }
+}
+
+.btn-add {
+    background: #3949ab;
+    color: white;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+}
+
+.btn-cancel {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    color: #666;
+}
+
+.btn-add-card {
+    width: 100%;
+    background: transparent;
+    border: none;
+    padding: 8px;
+    border-radius: 8px;
+    cursor: pointer;
+    color: #666;
+    font-size: 14px;
+    text-align: left;
+
+    &:hover {
+        background: rgba(0, 0, 0, 0.05);
+        color: #333;
+    }
+}
+
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    width: 90%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+}

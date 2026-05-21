@@ -105,7 +105,7 @@ class CardController extends AbstractController
             'checklistItems' => $card->getChecklistItems()->map(fn($i) => [
                 'id' => $i->getId(),
                 'content' => $i->getContent(),
-                'isDone' => $i->isIsDone(),
+                'isDone' => $i->isDone(),
                 'position' => $i->getPosition(),
             ])->toArray(),
             'comments' => $card->getComments()->map(fn($c) => [

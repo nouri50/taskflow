@@ -1,0 +1,98 @@
+// Même style que login
+.auth-container {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #1a237e, #3949ab);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.auth-card {
+    background: white;
+    border-radius: 16px;
+    padding: 40px;
+    width: 100%;
+    max-width: 420px;
+    text-align: center;
+
+    h1 {
+        font-size: 24px;
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+
+    p {
+        color: #666;
+        margin-bottom: 24px;
+    }
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.form-group {
+    text-align: left;
+    margin-bottom: 16px;
+
+    label {
+        display: block;
+        font-weight: 500;
+        margin-bottom: 6px;
+        font-size: 14px;
+    }
+
+    input {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 14px;
+        box-sizing: border-box;
+
+        &:focus {
+            outline: none;
+            border-color: #3949ab;
+        }
+    }
+}
+
+.btn-primary {
+    width: 100%;
+    padding: 14px;
+    background: #3949ab;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 8px;
+
+    &:hover {
+        background: #303f9f;
+    }
+
+    &:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+    }
+}
+
+.error {
+    color: #e53935;
+    font-size: 14px;
+    margin-bottom: 12px;
+}
+
+.link {
+    margin-top: 20px;
+    font-size: 14px;
+
+    a {
+        color: #3949ab;
+        font-weight: 600;
+    }
+}

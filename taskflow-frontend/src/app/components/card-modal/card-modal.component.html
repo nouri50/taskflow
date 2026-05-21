@@ -1,0 +1,57 @@
+<div class="modal" *ngIf="fullCard">
+    <div class="modal-header">
+        <h2>{{ fullCard.title }}</h2>
+        <button class="btn-close" (click)="close.emit()">✕</button>
+    </div>
+
+    <div class="modal-body">
+        <div class="section">
+            <p class="description">{{ fullCard.description || 'Aucune description' }}</p>
+            <span class="priority" [class]="'priority-' + fullCard.priority">{{ fullCard.priority }}</span>
+        </div>
+
+        <!-- Checklist -->
+        <div class="section">
+            <h3>Checklist <span class="count">{{ getCompletedCount() }} / {{ getTotalCount() }}</span></h3>
+            <div class="progress-bar">
+                <div class="progress-fill" [style.width.%]="getProgress()"></div>
+            </div>
+
+            <div class="checklist-items">
+                <div class="checklist-item" *ngFor="let item of fullCard.checklistItems">
+                    <input type="checkbox" [checked]="item.isDone"
+                        (change)="toggleChecklistItem(item.id, item.isDone)" />
+                    <span [class.done]="item.isDone">{{ item.content }}</span>
+                </div>
+            </div>
+
+            <div class="add-item">
+                <input type="text" [(ngModel)]="newChecklistItem" placeholder="Ajouter un item..."
+                    (keyup.enter)="addChecklistItem()" />
+                <button (click)="addChecklistItem()">+</button>
+            </div>
+        </div>
+
+        <!-- Comments -->
+        <div class="section">
+            <h3>Commentaires</h3>
+
+            <div class="comments">
+                <div class="comment" *ngFor="let comment of fullCard.comments">
+                    <div class="comment-header">
+                        <span class="author">{{ comment.author.firstName }} {{ comment.author.lastName }}</span>
+                        <span class="date">{{ comment.createdAt }}</span>
+                        <button class="btn-delete" (click)="deleteComment(comment.id)">✕</button>
+                    </div>
+                    <p>{{ comment.content }}</p>
+                </div>
+            </div>
+
+            <div class="add-comment">
+                <input type="text" [(ngModel)]="newComment" placeholder="Ajouter un commentaire..."
+                    (keyup.enter)="addComment()" />
+                <button class="btn-send" (click)="addComment()">Envoyer</button>
+            </div>
+        </div>
+    </div>
+</div>

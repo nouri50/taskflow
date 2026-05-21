@@ -1,0 +1,29 @@
+<div class="auth-container">
+    <div class="auth-card">
+        <div class="logo">
+            <span class="logo-icon">✓</span>
+        </div>
+        <h1>TaskFlow</h1>
+        <p>Bienvenue! Connectez-vous à votre compte</p>
+
+        <form [formGroup]="form" (ngSubmit)="onSubmit()">
+            <div class="form-group">
+                <label>Adresse email</label>
+                <input type="email" formControlName="email" placeholder="nom@exemple.com" />
+            </div>
+
+            <div class="form-group">
+                <label>Mot de passe</label>
+                <input type="password" formControlName="password" placeholder="••••••••" />
+            </div>
+
+            <div class="error" *ngIf="error">{{ error }}</div>
+
+            <button type="submit" [disabled]="loading" class="btn-primary">
+                {{ loading ? 'Connexion...' : 'Se connecter' }}
+            </button>
+        </form>
+
+        <p class="link">Vous n'avez pas de compte? <a routerLink="/register">Inscrivez-vous</a></p>
+    </div>
+</div>
