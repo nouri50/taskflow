@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Card;
 use App\Repository\ColumnRepository;
 use App\Repository\CardRepository;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -64,6 +65,7 @@ class CardController extends AbstractController
         $card->setPosition($data['position'] ?? $column->getCards()->count());
         $card->setBoardColumn($column);
         $card->setCreatedAt(new \DateTimeImmutable());
+        $card->setCreatedBy($this->getUser());
 
         if (!empty($data['dueDate'])) {
             $card->setDueDate(new \DateTime($data['dueDate']));
@@ -97,6 +99,11 @@ class CardController extends AbstractController
                 'firstName' => $card->getAssignedTo()->getFirstName(),
                 'lastName' => $card->getAssignedTo()->getLastName(),
             ] : null,
+            'createdBy' => $card->getCreatedBy() ? [
+                'id' => $card->getCreatedBy()->getId(),
+                'firstName' => $card->getCreatedBy()->getFirstName(),
+                'lastName' => $card->getCreatedBy()->getLastName(),
+            ] : null,
             'labels' => $card->getLabels()->map(fn($l) => [
                 'id' => $l->getId(),
                 'name' => $l->getName(),
@@ -122,7 +129,7 @@ class CardController extends AbstractController
 
     // PUT /api/cards/{id}
     #[Route('/{id}', name: 'card_update', methods: ['PUT'])]
-    public function update(Card $card, Request $request, ColumnRepository $columnRepository, EntityManagerInterface $em): JsonResponse
+    public function update(Card $card, Request $request, ColumnRepository $columnRepository, UserRepository $userRepository, EntityManagerInterface $em): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
 
@@ -132,6 +139,16 @@ class CardController extends AbstractController
         if (isset($data['position'])) $card->setPosition($data['position']);
         if (array_key_exists('dueDate', $data)) {
             $card->setDueDate($data['dueDate'] ? new \DateTime($data['dueDate']) : null);
+        }
+
+        // Assignation
+        if (array_key_exists('assignedToId', $data)) {
+            if ($data['assignedToId'] === null) {
+                $card->setAssignedTo(null);
+            } else {
+                $user = $userRepository->find($data['assignedToId']);
+                if ($user) $card->setAssignedTo($user);
+            }
         }
 
         // Déplacement entre colonnes (drag & drop)

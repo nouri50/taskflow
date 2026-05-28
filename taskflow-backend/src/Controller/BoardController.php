@@ -122,4 +122,64 @@ class BoardController extends AbstractController
 
         return $this->json(['message' => 'Board supprimé'], 200);
     }
+
+    // POST /api/boards/{id}/invite
+    #[Route('/{id}/invite', name: 'board_invite', methods: ['POST'])]
+    public function invite(Board $board, Request $request, EntityManagerInterface $em): JsonResponse
+    {
+        $user = $this->getUser();
+
+        if ($board->getOwner() !== $user) {
+            return $this->json(['message' => 'Seul le propriétaire peut inviter'], 403);
+        }
+
+        $data = json_decode($request->getContent(), true);
+        if (empty($data['email'])) {
+            return $this->json(['message' => 'email requis'], 400);
+        }
+
+        $userRepo = $em->getRepository(\App\Entity\User::class);
+        $invitedUser = $userRepo->findOneBy(['email' => $data['email']]);
+
+        if (!$invitedUser) {
+            return $this->json(['message' => 'Utilisateur introuvable'], 404);
+        }
+
+        // Vérifier s'il est déjà membre
+        $memberRepo = $em->getRepository(\App\Entity\BoardMember::class);
+        $existing = $memberRepo->findOneBy(['board' => $board, 'user' => $invitedUser]);
+
+        if ($existing) {
+            return $this->json(['message' => 'Déjà membre'], 400);
+        }
+
+        $member = new \App\Entity\BoardMember();
+        $member->setBoard($board);
+        $member->setUser($invitedUser);
+        $member->setRole('member');
+        $member->setJoinedAt(new \DateTimeImmutable());
+
+        $em->persist($member);
+        $em->flush();
+
+        return $this->json(['message' => 'Membre ajouté avec succès'], 201);
+    }
+
+    // GET /api/boards/{id}/members
+    #[Route('/{id}/members', name: 'board_members', methods: ['GET'])]
+    public function members(Board $board): JsonResponse
+    {
+        $members = $board->getBoardMembers()->map(fn($m) => [
+            'id' => $m->getId(),
+            'role' => $m->getRole(),
+            'user' => [
+                'id' => $m->getUser()->getId(),
+                'firstName' => $m->getUser()->getFirstName(),
+                'lastName' => $m->getUser()->getLastName(),
+                'email' => $m->getUser()->getEmail(),
+            ]
+        ])->toArray();
+
+        return $this->json($members);
+    }
 }

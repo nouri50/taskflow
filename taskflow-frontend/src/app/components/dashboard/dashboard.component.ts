@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { BoardService } from '../../services/board.service';
@@ -9,7 +9,7 @@ import { Board } from '../../models/board';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule, ],
+  imports: [CommonModule, FormsModule],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'
 })
@@ -19,6 +19,9 @@ export class DashboardComponent implements OnInit {
   newBoardName = '';
   newBoardDescription = '';
   loading = false;
+  editingBoard: Board | null = null;
+  editName = '';
+  editDescription = '';
 
   constructor(
     private boardService: BoardService,
@@ -55,6 +58,40 @@ export class DashboardComponent implements OnInit {
       error: () => this.loading = false
     });
   }
+
+  startEdit(board: Board) {
+    this.editingBoard = board;
+    this.editName = board.name;
+    this.editDescription = board.description || '';
+  }
+
+  saveBoard(board: Board) {
+    this.boardService.updateBoard(board.id, {
+      name: this.editName,
+      description: this.editDescription
+    }).subscribe({
+      next: () => {
+        this.editingBoard = null;
+        this.loadBoards();
+      }
+    });
+  }
+
+  boardToDelete: number | null = null;
+
+deleteBoard(id: number) {
+  this.boardToDelete = id;
+}
+
+confirmDelete() {
+  if (!this.boardToDelete) return;
+  this.boardService.deleteBoard(this.boardToDelete).subscribe({
+    next: () => {
+      this.boardToDelete = null;
+      this.loadBoards();
+    }
+  });
+}
 
   openBoard(id: number) {
     this.router.navigate(['/boards', id]);

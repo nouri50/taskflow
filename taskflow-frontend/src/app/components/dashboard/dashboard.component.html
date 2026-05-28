@@ -23,9 +23,28 @@
         </div>
 
         <div class="boards-grid">
-            <div class="board-card" *ngFor="let board of boards" (click)="openBoard(board.id)">
-                <h3>{{ board.name }}</h3>
-                <p>{{ board.description || 'Aucune description' }}</p>
+            <div class="board-card" *ngFor="let board of boards">
+
+                <!-- Mode édition -->
+                <div *ngIf="editingBoard?.id === board.id" class="edit-form">
+                    <input type="text" [(ngModel)]="editName" placeholder="Nom" />
+                    <input type="text" [(ngModel)]="editDescription" placeholder="Description" />
+                    <div class="form-actions">
+                        <button class="btn-primary" (click)="saveBoard(board)">Sauvegarder</button>
+                        <button class="btn-cancel" (click)="editingBoard = null">Annuler</button>
+                    </div>
+                </div>
+
+                <!-- Mode affichage -->
+                <div *ngIf="editingBoard?.id !== board.id" (click)="openBoard(board.id)" class="board-content">
+                    <h3>{{ board.name }}</h3>
+                    <p>{{ board.description || 'Aucune description' }}</p>
+                    <div class="board-actions" (click)="$event.stopPropagation()">
+                        <button class="btn-edit" (click)="startEdit(board)">✏️</button>
+                        <button class="btn-delete" (click)="deleteBoard(board.id)">🗑️</button>
+                    </div>
+                </div>
+
             </div>
 
             <div class="board-card empty" *ngIf="boards.length === 0">
@@ -33,4 +52,16 @@
             </div>
         </div>
     </main>
+
+    <!-- Modal confirmation suppression -->
+    <div class="modal-overlay" *ngIf="boardToDelete">
+        <div class="confirm-modal">
+            <h3>Supprimer ce board ?</h3>
+            <p>Cette action est irréversible. Toutes les colonnes et cartes seront supprimées.</p>
+            <div class="modal-actions">
+                <button class="btn-danger" (click)="confirmDelete()">Supprimer</button>
+                <button class="btn-cancel" (click)="boardToDelete = null">Annuler</button>
+            </div>
+        </div>
+    </div>
 </div>

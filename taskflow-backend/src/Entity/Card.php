@@ -41,6 +41,9 @@ class Card
     #[ORM\JoinColumn(nullable: true)]
     private ?User $assignedTo = null;
 
+    #[ORM\ManyToOne]
+    private ?User $createdBy = null;
+
     #[ORM\OneToMany(targetEntity: ChecklistItem::class, mappedBy: 'card', cascade: ['remove'])]
     private Collection $checklistItems;
 
@@ -141,6 +144,9 @@ class Card
         $this->assignedTo = $assignedTo;
         return $this;
     }
+
+    public function getCreatedBy(): ?User { return $this->createdBy; }
+    public function setCreatedBy(?User $user): static { $this->createdBy = $user; return $this; }
 
     public function getChecklistItems(): Collection
     {

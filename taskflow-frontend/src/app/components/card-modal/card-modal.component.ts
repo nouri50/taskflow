@@ -2,6 +2,7 @@ import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CardService } from '../../services/card.service';
+import { BoardService } from '../../services/board.service';
 import { Card } from '../../models/card';
 
 @Component({
@@ -13,22 +14,68 @@ import { Card } from '../../models/card';
 })
 export class CardModalComponent implements OnInit {
   @Input() card!: Card;
+  @Input() boardId!: number;
   @Output() close = new EventEmitter<void>();
 
   fullCard: Card | null = null;
   newComment = '';
   newChecklistItem = '';
+  isEditing = false;
+  editTitle = '';
+  editDescription = '';
+  editPriority = '';
+  editDueDate = '';
 
-  constructor(private cardService: CardService) {}
+  members: any[] = [];
+  selectedAssigneeId: number | null = null;
+
+  constructor(
+    private cardService: CardService,
+    private boardService: BoardService
+  ) {}
 
   ngOnInit() {
     this.loadCard();
+    if (this.boardId) {
+      this.boardService.getMembers(this.boardId).subscribe({
+        next: (members) => this.members = members
+      });
+    }
   }
 
   loadCard() {
     this.cardService.getCard(this.card.id).subscribe({
-      next: (card) => this.fullCard = card
+      next: (card) => {
+        this.fullCard = card;
+        this.editTitle = card.title;
+        this.editDescription = card.description || '';
+        this.editPriority = card.priority;
+        this.editDueDate = card.dueDate || '';
+        this.selectedAssigneeId = card.assignedTo?.id ?? null;
+      }
     });
+  }
+
+  startEdit() {
+    this.isEditing = true;
+  }
+
+  saveEdit() {
+    this.cardService.updateCard(this.card.id, {
+      title: this.editTitle,
+      description: this.editDescription,
+      priority: this.editPriority,
+      dueDate: this.editDueDate || null
+    }).subscribe({
+      next: () => {
+        this.isEditing = false;
+        this.loadCard();
+      }
+    });
+  }
+
+  cancelEdit() {
+    this.isEditing = false;
   }
 
   addComment() {
@@ -57,8 +104,20 @@ export class CardModalComponent implements OnInit {
     });
   }
 
+  deleteChecklistItem(itemId: number) {
+    this.cardService.deleteChecklistItem(this.card.id, itemId).subscribe({
+      next: () => this.loadCard()
+    });
+  }
+
   deleteComment(commentId: number) {
     this.cardService.deleteComment(this.card.id, commentId).subscribe({
+      next: () => this.loadCard()
+    });
+  }
+
+  assignCard(userId: number | null) {
+    this.cardService.updateCard(this.card.id, { assignedToId: userId ?? null }).subscribe({
       next: () => this.loadCard()
     });
   }

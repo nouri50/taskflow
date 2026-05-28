@@ -34,6 +34,11 @@ export interface Card {
     firstName: string;
     lastName: string;
   };
+  createdBy?: {
+    id: number;
+    firstName: string;
+    lastName: string;
+  };
   labels?: Label[];
   checklistItems?: ChecklistItem[];
   comments?: Comment[];

@@ -36,5 +36,13 @@ export class BoardService {
 
   createColumn(boardId: number, data: { name: string; position: number }): Observable<any> {
     return this.http.post(`${this.apiUrl}/boards/${boardId}/columns`, data);
-  }
+    }
+    
+    inviteMember(boardId: number, email: string): Observable<any> {
+  return this.http.post(`${this.apiUrl}/boards/${boardId}/invite`, { email });
+}
+
+getMembers(boardId: number): Observable<any[]> {
+  return this.http.get<any[]>(`${this.apiUrl}/boards/${boardId}/members`);
+}
 }

@@ -1,13 +1,79 @@
 <div class="modal" *ngIf="fullCard">
     <div class="modal-header">
-        <h2>{{ fullCard.title }}</h2>
-        <button class="btn-close" (click)="close.emit()">✕</button>
+        <div class="header-left">
+            <div class="card-priority-bar" [class]="'priority-' + fullCard.priority"></div>
+            <h2 *ngIf="!isEditing">{{ fullCard.title }}</h2>
+            <input *ngIf="isEditing" type="text" [(ngModel)]="editTitle" class="edit-title" />
+        </div>
+        <div class="header-actions">
+            <button class="btn-edit" *ngIf="!isEditing" (click)="startEdit()">✏️ Modifier</button>
+            <button class="btn-save" *ngIf="isEditing" (click)="saveEdit()">💾 Sauvegarder</button>
+            <button class="btn-cancel-edit" *ngIf="isEditing" (click)="cancelEdit()">Annuler</button>
+            <button class="btn-close" (click)="close.emit()">✕</button>
+        </div>
     </div>
 
     <div class="modal-body">
-        <div class="section">
-            <p class="description">{{ fullCard.description || 'Aucune description' }}</p>
-            <span class="priority" [class]="'priority-' + fullCard.priority">{{ fullCard.priority }}</span>
+
+        <!-- Infos carte -->
+        <div class="section card-info">
+            <div *ngIf="!isEditing" class="info-display">
+                <p class="description">{{ fullCard.description || 'Aucune description' }}</p>
+                <div class="badges">
+                    <span class="priority-badge" [class]="'priority-' + fullCard.priority">{{ fullCard.priority
+                        }}</span>
+                    <span class="due-date" *ngIf="fullCard.dueDate">📅 {{ fullCard.dueDate }}</span>
+                </div>
+            </div>
+
+            <div *ngIf="isEditing" class="info-edit">
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea [(ngModel)]="editDescription" rows="3" placeholder="Description..."></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Priorité</label>
+                        <select [(ngModel)]="editPriority">
+                            <option value="low">Basse</option>
+                            <option value="medium">Moyenne</option>
+                            <option value="high">Haute</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Date limite</label>
+                        <input type="date" [(ngModel)]="editDueDate" />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Personnes -->
+        <div class="section people-section">
+            <h3>👤 Personnes</h3>
+            <div class="person-row">
+                <span class="person-label">Créé par</span>
+                <div class="person-chip" *ngIf="fullCard.createdBy; else noCreator">
+                    <div class="avatar-sm">{{ fullCard.createdBy.firstName[0] }}{{ fullCard.createdBy.lastName[0] }}</div>
+                    <span>{{ fullCard.createdBy.firstName }} {{ fullCard.createdBy.lastName }}</span>
+                </div>
+                <ng-template #noCreator><span class="none">—</span></ng-template>
+            </div>
+            <div class="person-row">
+                <span class="person-label">Assigné à</span>
+                <div class="assign-wrapper">
+                    <div class="person-chip" *ngIf="fullCard.assignedTo">
+                        <div class="avatar-sm assigned">{{ fullCard.assignedTo.firstName[0] }}{{ fullCard.assignedTo.lastName[0] }}</div>
+                        <span>{{ fullCard.assignedTo.firstName }} {{ fullCard.assignedTo.lastName }}</span>
+                    </div>
+                    <select class="assign-select" [(ngModel)]="selectedAssigneeId" (ngModelChange)="assignCard($event)">
+                        <option [ngValue]="null">— Non assigné —</option>
+                        <option *ngFor="let m of members" [ngValue]="m.user.id">
+                            {{ m.user.firstName }} {{ m.user.lastName }}
+                        </option>
+                    </select>
+                </div>
+            </div>
         </div>
 
         <!-- Checklist -->
@@ -22,6 +88,7 @@
                     <input type="checkbox" [checked]="item.isDone"
                         (change)="toggleChecklistItem(item.id, item.isDone)" />
                     <span [class.done]="item.isDone">{{ item.content }}</span>
+                    <button class="btn-delete-item" (click)="deleteChecklistItem(item.id)">✕</button>
                 </div>
             </div>
 
@@ -53,5 +120,6 @@
                 <button class="btn-send" (click)="addComment()">Envoyer</button>
             </div>
         </div>
+
     </div>
 </div>

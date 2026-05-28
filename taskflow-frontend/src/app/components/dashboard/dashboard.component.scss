@@ -133,9 +133,9 @@
     background: white;
     border-radius: 12px;
     padding: 24px;
-    cursor: pointer;
     border-left: 4px solid #3949ab;
     transition: transform 0.2s, box-shadow 0.2s;
+    position: relative;
 
     &:hover {
         transform: translateY(-2px);
@@ -155,12 +155,121 @@
 
     &.empty {
         border-left-color: #ddd;
-        cursor: default;
         text-align: center;
 
         &:hover {
             transform: none;
             box-shadow: none;
         }
+    }
+}
+
+.board-content {
+    position: relative;
+    cursor: pointer;
+}
+
+.board-actions {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    display: none;
+    gap: 4px;
+
+    button {
+        background: white;
+        border: 1px solid #ddd;
+        cursor: pointer;
+        font-size: 14px;
+        padding: 4px 8px;
+        border-radius: 6px;
+
+        &:hover {
+            background: #f5f5f5;
+        }
+    }
+}
+
+.board-card:hover .board-actions {
+    display: flex;
+}
+
+.edit-form {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    input {
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        font-size: 14px;
+
+        &:focus {
+            outline: none;
+            border-color: #3949ab;
+        }
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 8px;
+        margin-top: 4px;
+    }
+}
+
+.btn-delete:hover {
+    color: #e53935 !important;
+}
+
+
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.confirm-modal {
+    background: white;
+    border-radius: 16px;
+    padding: 32px;
+    max-width: 400px;
+    width: 90%;
+    text-align: center;
+
+    h3 {
+        font-size: 18px;
+        font-weight: 700;
+        margin-bottom: 12px;
+    }
+
+    p {
+        color: #666;
+        font-size: 14px;
+        margin-bottom: 24px;
+    }
+}
+
+.modal-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+}
+
+.btn-danger {
+    background: #e53935;
+    color: white;
+    border: none;
+    padding: 10px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+
+    &:hover {
+        background: #c62828;
     }
 }

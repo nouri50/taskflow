@@ -16,16 +16,30 @@
             <div class="cards-list" cdkDropList [id]="'col-' + column.id" [cdkDropListData]="column.cards || []"
                 [cdkDropListConnectedTo]="getColumnIds()" (cdkDropListDropped)="drop($event, column)">
 
-                <div class="card" *ngFor="let card of column.cards" cdkDrag (click)="openCard(card)">
-                    <div class="card-priority" [class]="'priority-' + card.priority"></div>
-                    <h4>{{ card.title }}</h4>
-                    <p *ngIf="card.description">{{ card.description }}</p>
-                    <div class="card-footer">
-                        <span class="due-date" *ngIf="card.dueDate">📅 {{ card.dueDate }}</span>
-                        <span class="assigned" *ngIf="card.assignedTo">
-                            {{ card.assignedTo.firstName[0] }}{{ card.assignedTo.lastName[0] }}
-                        </span>
+                <div
+                  class="card"
+                  *ngFor="let card of column.cards"
+                  cdkDrag
+                  (click)="openCard(card)">
+                  <div class="card-priority" [class]="'priority-' + card.priority"></div>
+                  <h4>{{ card.title }}</h4>
+                  <p *ngIf="card.description">{{ card.description }}</p>
+                  <div class="card-footer">
+                    <div class="card-badges">
+                      <span class="badge" *ngIf="card.dueDate" [class.overdue]="isOverdue(card.dueDate)">
+                        📅 {{ card.dueDate }}
+                      </span>
+                      <span class="badge" *ngIf="card.checklistItems?.length">
+                        ✅ {{ getCheckedCount(card) }}/{{ card.checklistItems?.length }}
+                      </span>
+                      <span class="badge" *ngIf="card.comments?.length">
+                        💬 {{ card.comments?.length }}
+                      </span>
                     </div>
+                    <span class="assigned" *ngIf="card.assignedTo">
+                      {{ card.assignedTo.firstName[0] }}{{ card.assignedTo.lastName[0] }}
+                    </span>
+                  </div>
                 </div>
 
             </div>
@@ -45,11 +59,38 @@
             </div>
         </div>
     </div>
+
+
+    <!-- Panneau membres -->
+    <div class="members-panel">
+        <button class="btn-members" (click)="showInviteForm = !showInviteForm">
+            👥 Membres ({{ members.length }})
+        </button>
+    
+        <div class="invite-form" *ngIf="showInviteForm">
+            <div class="members-list">
+                <div class="member" *ngFor="let m of members">
+                    <span class="avatar">{{ m.user.firstName[0] }}{{ m.user.lastName[0] }}</span>
+                    <span class="name">{{ m.user.firstName }} {{ m.user.lastName }}</span>
+                    <span class="role" [class]="m.role">{{ m.role }}</span>
+                </div>
+            </div>
+    
+            <div class="invite-input">
+                <input type="email" [(ngModel)]="inviteEmail" placeholder="Email du membre..."
+                    (keyup.enter)="inviteMember()" />
+                <button class="btn-add" (click)="inviteMember()">Inviter</button>
+            </div>
+    
+            <div class="success" *ngIf="inviteSuccess">{{ inviteSuccess }}</div>
+            <div class="error" *ngIf="inviteError">{{ inviteError }}</div>
+        </div>
+    </div>
 </div>
 
 <!-- Card Modal -->
 <div class="modal-overlay" *ngIf="selectedCard" (click)="closeCard()">
     <div class="modal-content" (click)="$event.stopPropagation()">
-        <app-card-modal [card]="selectedCard" (close)="closeCard()"></app-card-modal>
+        <app-card-modal [card]="selectedCard" [boardId]="boardId" (close)="closeCard()"></app-card-modal>
     </div>
 </div>

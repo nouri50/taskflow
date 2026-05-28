@@ -35,7 +35,7 @@ class ChecklistItemController extends AbstractController
         return $this->json([
             'id' => $item->getId(),
             'content' => $item->getContent(),
-            'isDone' => $item->$item->isDone(),
+            'isDone' => $item->isDone(),
             'position' => $item->getPosition(),
         ], 201);
     }

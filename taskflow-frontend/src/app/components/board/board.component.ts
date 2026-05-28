@@ -5,8 +5,8 @@ import { FormsModule } from '@angular/forms';
 import { CdkDragDrop, DragDropModule, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { BoardService } from '../../services/board.service';
 import { CardService } from '../../services/card.service';
-import { Card, Column } from '../../models/card';
 import { CardModalComponent } from '../card-modal/card-modal.component';
+import { Card, Column } from '../../models/card';
 
 @Component({
   selector: 'app-board',
@@ -23,6 +23,12 @@ export class BoardComponent implements OnInit {
   showAddCard: { [columnId: number]: boolean } = {};
   selectedCard: Card | null = null;
 
+  members: any[] = [];
+  showInviteForm = false;
+  inviteEmail = '';
+  inviteError = '';
+  inviteSuccess = '';
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -33,6 +39,7 @@ export class BoardComponent implements OnInit {
   ngOnInit() {
     this.boardId = Number(this.route.snapshot.paramMap.get('id'));
     this.loadBoard();
+    this.loadMembers();
   }
 
   loadBoard() {
@@ -46,9 +53,39 @@ export class BoardComponent implements OnInit {
         this.columns = columns;
         this.columns.forEach(col => {
           this.cardService.getCards(col.id).subscribe({
-            next: (cards) => col.cards = cards,
+            next: (cards) => {
+              col.cards = cards;
+              col.cards.forEach((card, index) => {
+                this.cardService.getCard(card.id).subscribe({
+                  next: (fullCard) => col.cards![index] = fullCard
+                });
+              });
+            }
           });
         });
+      }
+    });
+  }
+
+  loadMembers() {
+    this.boardService.getMembers(this.boardId).subscribe({
+      next: (members) => this.members = members
+    });
+  }
+
+  inviteMember() {
+    if (!this.inviteEmail.trim()) return;
+    this.inviteError = '';
+    this.inviteSuccess = '';
+
+    this.boardService.inviteMember(this.boardId, this.inviteEmail).subscribe({
+      next: () => {
+        this.inviteSuccess = 'Membre ajouté !';
+        this.inviteEmail = '';
+        this.loadMembers();
+      },
+      error: (err) => {
+        this.inviteError = err.error?.message || 'Erreur';
       }
     });
   }
@@ -102,6 +139,14 @@ export class BoardComponent implements OnInit {
 
   getColumnIds(): string[] {
     return this.columns.map(c => 'col-' + c.id);
+  }
+
+  getCheckedCount(card: Card): number {
+    return card.checklistItems?.filter(i => i.isDone).length || 0;
+  }
+
+  isOverdue(dueDate: string): boolean {
+    return new Date(dueDate) < new Date();
   }
 
   goBack() {
