@@ -27,18 +27,18 @@
 
 ##  Fonctionnalités
 
-- 🔐 Authentification JWT (inscription / connexion)
-- 📋 Dashboard avec gestion des boards
-- 🗂️ Vue Kanban avec colonnes (À faire / En cours / Terminé)
-- 🃏 Cartes complètes :
+-  Authentification JWT (inscription / connexion)
+-  Dashboard avec gestion des boards
+-  Vue Kanban avec colonnes (À faire / En cours / Terminé)
+-  Cartes complètes :
   - Titre, description, priorité, date limite
   - Checklist avec progress bar
   - Commentaires
   - Labels colorés
   - Assignation de membres
-- 🖱️ Drag & Drop entre colonnes
-- 👥 Invitation de membres par email
-- ✏️ Modification / Suppression boards et cartes
+-  Drag & Drop entre colonnes
+-  Invitation de membres par email
+-  Modification / Suppression boards et cartes
 
 
 
@@ -87,27 +87,11 @@ ng serve
 
 L'application est accessible sur `http://localhost:4200`
 
-##  Structure
-
-
-taskflow/
-├── taskflow-backend/          # API Symfony
-│   ├── src/
-│   │   ├── Controller/        # AuthController, BoardController, CardController...
-│   │   ├── Entity/            # User, Board, Column, Card, Label...
-│   │   └── Repository/
-│   └── config/
-└── taskflow-frontend/         # Application Angular
-└── src/app/
-├── components/        # login, register, dashboard, board, card-modal
-├── services/          # auth, board, card
-├── models/            # user, board, card
-├── guards/            # auth guard
-└── interceptors/      # JWT interceptor
 
 
 
-## 🎯 Objectif
+
+##  Objectif
 
 Projet personnel développé pour :
 - Pratiquer Symfony + Angular en dehors des projets professionnels
