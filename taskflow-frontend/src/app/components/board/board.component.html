@@ -24,6 +24,16 @@
                   <div class="card-priority" [class]="'priority-' + card.priority"></div>
                   <h4>{{ card.title }}</h4>
                   <p *ngIf="card.description">{{ card.description }}</p>
+                  <div class="card-labels" *ngIf="card.labels?.length">
+                    <span
+                      class="card-label"
+                      *ngFor="let label of card.labels"
+                      [style.background]="label.color + '22'"
+                      [style.color]="label.color"
+                      [style.borderColor]="label.color">
+                      {{ label.name }}
+                    </span>
+                  </div>
                   <div class="card-footer">
                     <div class="card-badges">
                       <span class="badge" *ngIf="card.dueDate" [class.overdue]="isOverdue(card.dueDate)">

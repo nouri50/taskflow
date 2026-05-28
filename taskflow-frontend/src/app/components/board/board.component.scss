@@ -158,6 +158,21 @@
     }
 }
 
+.card-labels {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 6px 0 0 8px;
+}
+
+.card-label {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 20px;
+  border: 1px solid;
+}
+
 .card-badges {
   display: flex;
   gap: 6px;

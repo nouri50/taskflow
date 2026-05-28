@@ -76,6 +76,47 @@
             </div>
         </div>
 
+        <!-- Labels -->
+        <div class="section">
+            <h3>Labels</h3>
+
+            <div class="labels-list">
+                <span
+                    class="label-tag"
+                    *ngFor="let label of fullCard?.labels"
+                    [style.background]="label.color + '22'"
+                    [style.color]="label.color"
+                    [style.borderColor]="label.color">
+                    {{ label.name }}
+                </span>
+                <span *ngIf="!fullCard?.labels?.length" class="no-labels">Aucun label</span>
+            </div>
+
+            <div class="label-picker">
+                <div
+                    class="label-option"
+                    *ngFor="let bl of boardLabels"
+                    [class.selected]="isLabelAssigned(bl.id)"
+                    [style.background]="bl.color + '22'"
+                    [style.borderColor]="bl.color"
+                    (click)="toggleLabel(bl.id)">
+                    <span [style.color]="bl.color">{{ bl.name }}</span>
+                    <span class="check" *ngIf="isLabelAssigned(bl.id)">✓</span>
+                </div>
+            </div>
+
+            <div class="create-label" *ngIf="showLabelForm">
+                <input type="text" [(ngModel)]="newLabelName" placeholder="Nom du label" (keyup.enter)="addNewLabel()" />
+                <input type="color" [(ngModel)]="newLabelColor" />
+                <button (click)="addNewLabel()">Créer</button>
+                <button (click)="showLabelForm = false">Annuler</button>
+            </div>
+
+            <button class="btn-add-label" (click)="showLabelForm = !showLabelForm">
+                + Créer un label
+            </button>
+        </div>
+
         <!-- Checklist -->
         <div class="section">
             <h3>Checklist <span class="count">{{ getCompletedCount() }} / {{ getTotalCount() }}</span></h3>

@@ -29,6 +29,11 @@ export class CardModalComponent implements OnInit {
   members: any[] = [];
   selectedAssigneeId: number | null = null;
 
+  boardLabels: any[] = [];
+  showLabelForm = false;
+  newLabelName = '';
+  newLabelColor = '#3949ab';
+
   constructor(
     private cardService: CardService,
     private boardService: BoardService
@@ -40,7 +45,41 @@ export class CardModalComponent implements OnInit {
       this.boardService.getMembers(this.boardId).subscribe({
         next: (members) => this.members = members
       });
+      this.loadBoardLabels();
     }
+  }
+
+  loadBoardLabels() {
+    this.boardService.getLabels(this.boardId).subscribe({
+      next: (labels) => this.boardLabels = labels
+    });
+  }
+
+  isLabelAssigned(labelId: number): boolean {
+    return this.fullCard?.labels?.some(l => l.id === labelId) || false;
+  }
+
+  toggleLabel(labelId: number) {
+    if (this.isLabelAssigned(labelId)) {
+      this.cardService.removeLabel(this.card.id, labelId).subscribe({
+        next: () => this.loadCard()
+      });
+    } else {
+      this.cardService.addLabel(this.card.id, labelId).subscribe({
+        next: () => this.loadCard()
+      });
+    }
+  }
+
+  addNewLabel() {
+    if (!this.newLabelName.trim()) return;
+    this.boardService.createLabel(this.boardId, this.newLabelName, this.newLabelColor).subscribe({
+      next: () => {
+        this.newLabelName = '';
+        this.showLabelForm = false;
+        this.loadBoardLabels();
+      }
+    });
   }
 
   loadCard() {

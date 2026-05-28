@@ -45,4 +45,12 @@ export class BoardService {
 getMembers(boardId: number): Observable<any[]> {
   return this.http.get<any[]>(`${this.apiUrl}/boards/${boardId}/members`);
 }
+
+getLabels(boardId: number): Observable<any[]> {
+  return this.http.get<any[]>(`${this.apiUrl}/boards/${boardId}/labels`);
+}
+
+createLabel(boardId: number, name: string, color: string): Observable<any> {
+  return this.http.post(`${this.apiUrl}/boards/${boardId}/labels`, { name, color });
+}
 }
